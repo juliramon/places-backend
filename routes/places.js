@@ -1,30 +1,27 @@
+
 const express = require('express')
 const router = express.Router()
 const mongoose = require('mongoose')
 const uploader = require('../configs/cloudinary-setup')
 
+
 // include the model:
-const Place = require('../models/place')
+const Place = require("../models/place");
 
-router.get('/', (req, res, next) => {
-  Place.find()
-    .then(resp => res.status(200).json(resp))
-    .catch(err => next(err))
-})
+router.get("/", (req, res, next) => {
+	Place.find()
+		.then((resp) => res.status(200).json(resp))
+		.catch((err) => next(err));
+});
 
-router.get('/highlights', (req, res, next) => {
-
-  const quantity = req.query.quantity
-
-  console.log(quantity)
-
-  // Place.find({highlight..... << crear aqui tu query})
-  //   .then(resp => res.status(200).json(resp))
-  //   .catch(err => next(err))
-
-  res.status(200).json({ message: "aguardando implementacion. " })
-
-})
+router.get("/highlights", (req, res, next) => {
+	const quantity = parseInt(req.query.quantity);
+	console.log("post limit defined =>", quantity);
+	Place.find({highlight: true})
+		.limit(quantity)
+		.then((resp) => res.status(200).json(resp))
+		.catch((err) => next(err));
+});
 
 router.get("/search", (req, res, next) => {
 
@@ -82,10 +79,11 @@ router.post('/', uploader.single('imageFile'), (req, res, next) => {
 })
 
 router.delete('/:id', (req, res, next) => {
-  // to do
-  //req.params.id
-  res.status(200).json({ message: "DELETE aguardando implementacion. " })
-
+  Place.deleteOne({ "_id" :req.params.id }) 
+  .then(places => {
+    res.json(places)
+  })
+  .catch(err => next(err))
 })
 
 router.patch('/:id', (req, res, next) => {
@@ -123,3 +121,6 @@ router.put('/:id',  uploader.single('imageUrl') , (req, res, next) => {
 
 
 module.exports = router
+
+
+
