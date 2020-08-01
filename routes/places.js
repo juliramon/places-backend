@@ -1,6 +1,9 @@
-const express = require("express");
-const router = express.Router();
-const mongoose = require("mongoose");
+
+const express = require('express')
+const router = express.Router()
+const mongoose = require('mongoose')
+const uploader = require('../configs/cloudinary-setup')
+
 
 // include the model:
 const Place = require("../models/place");
@@ -56,10 +59,20 @@ router.get('/:id', (req, res, next) => {
     })
 })
 
-router.post('/', (req, res, next) => {
-  Place.create(req.body)
+router.post('/', uploader.single('imageFile'), (req, res, next) => {
+  const {title, description, imageUrl, loc, highlight} = req.body
+
+  const place = {
+    title,
+    description,
+    imageUrl: req.file.path,
+    loc, 
+    highlight
+  }
+
+  Place.create(place)
     .then(place => {
-      // console.log('Created new thing: ', aNewThing);
+       //console.log('Created new thing: ', aNewThing);
       res.status(200).json(place)
     })
     .catch(err => next(err))
@@ -80,13 +93,24 @@ router.patch('/:id', (req, res, next) => {
 
 })
 
-router.put('/:id', (req, res, next) => {
+router.put('/:id',  uploader.single('imageUrl') , (req, res, next) => {
+  
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     res.status(400).json({ message: 'Specified id is not valid' })
     return
   }
 
-  Place.findByIdAndUpdate(req.params.id, req.body)
+  const {title, description, imageUrl, loc, highlight} = req.body
+
+  const place = {
+    title,
+    description,
+    imageUrl: req.file.path,
+    loc, 
+    highlight
+  }
+
+  Place.findByIdAndUpdate(req.params.id, place)
     .then(() => {
       res.json({ message: `Place id ${req.params.id} updated successfully.` })
     })
