@@ -1,29 +1,24 @@
-const express = require('express')
-const router = express.Router()
-const mongoose = require('mongoose')
+const express = require("express");
+const router = express.Router();
+const mongoose = require("mongoose");
 
 // include the model:
-const Place = require('../models/place')
+const Place = require("../models/place");
 
-router.get('/', (req, res, next) => {
-  Place.find()
-    .then(resp => res.status(200).json(resp))
-    .catch(err => next(err))
-})
+router.get("/", (req, res, next) => {
+	Place.find()
+		.then((resp) => res.status(200).json(resp))
+		.catch((err) => next(err));
+});
 
-router.get('/highlights', (req, res, next) => {
-
-  const quantity = req.query.quantity
-
-  console.log(quantity)
-
-  // Place.find({highlight..... << crear aqui tu query})
-  //   .then(resp => res.status(200).json(resp))
-  //   .catch(err => next(err))
-
-  res.status(200).json({ message: "aguardando implementacion. " })
-
-})
+router.get("/highlights", (req, res, next) => {
+	const quantity = parseInt(req.query.quantity);
+	console.log("post limit defined =>", quantity);
+	Place.find({highlight: true})
+		.limit(quantity)
+		.then((resp) => res.status(200).json(resp))
+		.catch((err) => next(err));
+});
 
 router.get("/search", (req, res, next) => {
 
@@ -102,3 +97,6 @@ router.put('/:id', (req, res, next) => {
 
 
 module.exports = router
+
+
+
