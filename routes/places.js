@@ -71,10 +71,11 @@ router.post('/', (req, res, next) => {
 })
 
 router.delete('/:id', (req, res, next) => {
-  // to do
-  //req.params.id
-  res.status(200).json({ message: "DELETE aguardando implementacion. " })
-
+  Place.deleteOne({ "_id" :req.params.id }) 
+  .then(places => {
+    res.json(places)
+  })
+  .catch(err => next(err))
 })
 
 router.patch('/:id', (req, res, next) => {
