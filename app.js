@@ -64,5 +64,4 @@ app.use('/api/places', places);
 const address = require('./routes/address');
 app.use('/api/address', address);
 
-
 module.exports = app;
